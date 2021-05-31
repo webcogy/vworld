@@ -1,0 +1,76 @@
+section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+input[type="button"] {
+  font-size: 15px;
+  font-weight: bold;
+  background: #333;
+  color: #fff;
+  padding: 3px 5px;
+  margin: 5px;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  font-family: roboto;
+}
+
+#vmap {
+  width: 70%;
+  height: 90vh;
+  left: 0px;
+  top: 0px;
+}
+.btnWrap {
+  width: 30%;
+  min-height: 90vh;
+  padding: 10px;
+}
+.btnBox {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-top: 1px solid #ddd;
+  padding: 10px 0;
+}
+.btnBox:first-child {
+  border-top: 0;
+}
+.title {
+  font-size: 15px;
+  font-weight: bold;
+  display: inline-block;
+  width: 120px;
+}
+
+#headerBox {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  min-height: 100px;
+  background: #fff;
+  padding: 15px;
+  font-size: 17px;
+  min-width: 200px;
+}
+#coordBox mark {
+  background: none;
+  display: block;
+  width: 100px;
+  padding-top: 10px;
+  font-weight: bold;
+}
+
+#markerList {
+  padding-top: 50px;
+}
+
+#markerList a {
+  display: block;
+  font-size: 17px;
+  margin-bottom: 20px;
+  color: blue;
+  text-decoration: underline;
+}

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>소방차 등록 및 주행 기능 테스트</title>
+  <script type="text/javascript" src="https://map.vworld.kr/js/webglMapInit.js.do?version=2.0&apiKey=767B7ADF-10BA-3D86-AB7E-02816B5B92E9&domain=http://map.vworld.kr"></script>  
+  <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+    <script src="https://openlayers.org/en/v4.0.1/build/ol.js"></script>
+    
+
+</head>
+
+<body>
+
+    <div id="vmap" style="width:100%;height:90vh;left:0px;top:0px"></div>
+    <input type="file" id="up_file" >  <input type="button" value ="데이터로드" id="fileload" name="fileload" onclick="fileload();">
+    <input type="button" onclick="measureLine()" value="거리">
+    <input type="button" onclick="startDrive()" value="주행시작">
+    <input type="button" onclick="stopDrive()" value="주행정지">
+    <input type="button" onclick="driveControl('speed',10)" value="가속">
+    <input type="button" onclick="driveControl('speed',-10)" value="감속">
+    <div id="check" style="width:100%;height:100px;left:0px;top:0px; white-space: pre-line;"></div>
+
+
+<script type="text/javascript">
+
+var mapOptions = new vw.MapOptions(
+    vw.BasemapType.GRAPHIC,
+    "",
+    vw.DensityType.FULL,
+    vw.DensityType.BASIC,
+    false,
+    new vw.CameraPosition(
+    new vw.CoordZ(127.425, 38.196, 13487),
+    new vw.Direction(-90, 0, 0)
+    ),
+    new vw.CameraPosition(
+    new vw.CoordZ(128.680000, 35.842834,200), // 초기위치조정
+    new vw.Direction(0, -90, 0)
+    )
+);
+
+var map = new vw.Map("vmap", mapOptions);
+
+function fileload(){
+    var tmppath = window.URL.createObjectURL($('[type=file]')[0].files[0]);
+    var point = new vw.CoordZ(128.680000, 35.842834, 1);
+    var options = { scale: 1000, minimumPixelSize: 10 };
+    //var options = { minimumPixelSize: 200 };
+    var id = "test1";
+
+    var modelz = new vw.geom.ModelZ(id, tmppath, point, options );
+    modelz.create();
+    // 이벤트 처리 함수이며, 파라미터로 클릭시 window 픽셀, ecef좌표, cartographic좌표(실제경위도), 객체정보를 인수로 받는다.
+    var eventHandler = function(windowPosition, ecefPosition, cartographic, featureInfo) {      
+        if ( featureInfo != null ) {
+            // featureInfo 와 Point객체와는 다름.
+            // Point 객체를 가져올 경우 featureInfo.groupId로 가져옴.(그룹별 아이디라기 보다는 개별아이디.)
+            var id = featureInfo.groupId;
+            var pointObj = map.getObjectById( id );
+            // 텍스트문구(HTML)
+            var html = '차량 운행 테스트';
+            // 제목 title
+            var title = "차량";
+            // 식별아이디, 탑재컨테이너, 제목, html, 레이어가로길이, 레이어세로길이, 클릭 이벤트X, 클릭 이벤트Y
+            pop = new vw.Popup("pop01", "vmap", title, html, 450, 300, windowPosition.x, windowPosition.y);
+            pop.create();
+        }
+    }
+    modelz.addEventListener(eventHandler);
+}
+
+
+
+// 거리 측정
+function measureLine() {
+    if ( map != null ) {
+        // static 메서드만 있음. start(), stop().
+        vw.MeasureLine.start();
+        // 우클릭시 종료 이벤트 설정
+        var evtMeasureRightHandler = function(event) {
+            vw.MeasureLine.stop();
+        }
+        vw.EventProcess.add( vw.MapController.RIGHTUPDNCLICK, map.onMouseRightDown, evtMeasureRightHandler);
+    }
+    console.log("🚀 ~ file: Vworld_drive.html ~ line 92 ~ measureLine ~ vw.Coord", vw.Coord)
+}
+/* 
+var drive;
+function startDrive()
+{
+    if(drive == null) drive = new vw.cameraAction.Drive();
+    drive.start();
+}
+
+function stopDrive()
+{
+    if(drive != null) drive.stop();
+}
+
+function driveControl(flag, val){
+    switch(flag){
+    case 'speed' :
+        val = drive.getSpeed() + val;
+        drive.setSpeed(val);
+        break;
+    case 'heading' :
+        drive.setHeadingSpeed(val);
+        break;
+    }
+}
+
+
+// 좌표로 이동
+function vwmoveTo(x,y,z){
+    var movePo = new vw.CoordZ(x,y,z);
+    var mPosi = new vw.CameraPosition(movePo, new vw.Direction(0,-80,0));
+    map.moveTo(mPosi);     
+}
+ */
+</script>
+</body>
+</html>  

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<!--
+    브이월드 WebGL API 2.0 
+
+    기초자료 : https://www.vworld.kr/dev/v4dv_opnws3dmap2guide_s001.do
+    코드샘플 : https://www.vworld.kr/dev/v4dv_opnws3dmap2exam_s001.do
+
+-->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Vworld webGL3D 지도</title>
+    <!-- <script type="text/javascript" src="http://map.vworld.kr/js/webglMapInit.js.do?version=2.0&apiKey=8399CBB3-380A-3786-B4EC-7AC86EAADE87"></script> -->
+
+    <link href="Vworld.css" rel="stylesheet">
+
+    <script type="text/javascript"
+    src="https://map.vworld.kr/js/webglMapInit.js.do?version=2.0&apiKey=767B7ADF-10BA-3D86-AB7E-02816B5B92E9&domain=map.vworld.kr"></script>
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+
+    <script src="map/inithome.js"></script>
+    <script src="map/map.js"></script>
+    <!-- <script src="map/map2d3d.js"></script> -->
+
+    <script src="camera/direction.js"></script>
+    <script src="camera/fly.js"></script>
+    <script src="camera/roll.js"></script>
+    <script src="camera/rotate.js"></script>
+    <script src="camera/driven.js"></script>
+
+    <script src="event/event.js"></script>
+    <script src="event/custom.js"></script>
+
+    <script src="3dmodel/fileload.js"></script>
+</head>
+<body>
+<section>
+    <div id="vmap"></div>
+    <script>
+        vwmap();
+    </script>
+    <div id="headerBox">
+        <div id="coordBox">
+            <mark>x좌표</mark>
+            <div id="x"></div>
+            <mark>y좌표</mark>
+            <div id="y"></div>
+        </div>
+        <div id="markerList"></div>
+    </div>
+
+
+
+    <div class="btnWrap">
+        <!--
+            추가 가능한 기능.
+            지도위에 3d모델추가 : https://www.vworld.kr/dev/v4dv_opnws3dmap2exam_s002.do?exaIde=EXAID_00000000000123&tabMenu=m1&searchKeyword=
+            검색 : https://www.vworld.kr/dev/v4dv_opnws3dmap2exam_s002.do?exaIde=EXAID_00000000000125&tabMenu=m1&searchKeyword=
+        -->
+
+        <div class="btnBox">
+            <span class="title">Map</span>
+            <div>
+                <input type="button" onclick="measureHeight()" value="높이">
+                <input type="button" onclick="measureLine()" value="거리">
+                <input type="button" onclick="measureArea()" value="면적">
+                <input type="button" onclick="stop()" value="종료">
+                <input type="button" onclick="erase()" value="지우기">
+                <input type="button" onclick="vwmoveTo(128.6859692,35.8380748,1000)" value="나노아이티">
+                <input type="button" value="초기지도이동" onclick="javascript:flyHome();"/>
+                <!-- <select id="setMode" onchange="mapController.setMode(this.value)">
+                    <option value="ws3d-map">3d-map</option>
+                    <option value="2d-map">2d-map</option>  
+                </select>   -->
+            </div>
+        </div>
+
+        <div class="btnBox">
+            <span class="title">Direction</span>
+            <div>
+                <input type="button" onclick="vwDirectionEast()" value="동쪽">
+                <input type="button" onclick="vwDirectionWest()" value="서쪽">
+                <input type="button" onclick="vwDirectionNorth()" value="북쪽">
+                <input type="button" onclick="vwDirectionSouth()" value="남쪽">
+                <input type="button" onclick="vwDirectionGround()" value="지면">
+                <input type="button" onclick="vwDirectionFront()" value="정면">
+            </div>
+        </div>
+        <div class="btnBox">
+            <span class="title">Fly<br>(비행모드)</span>
+            <div>
+                <input type="button" onclick="startFly()" value="비행시작">
+                <input type="button" onclick="stopFly()" value="비행정지">
+                <br>
+                <input type="button" onclick="flyControl('speed',100)" value="가속">
+                <input type="button" onclick="flyControl('speed',0)" value="정지">
+                <input type="button" onclick="flyControl('speed',-100)" value="감속">
+                <br>
+                <!--
+                    <input type="button" onclick="flyControl('heading',100)" value="왼쪽회전">
+                    <input type="button" onclick="flyControl('heading',0)" value="가운데">
+                    <input type="button" onclick="flyControl('heading',-100)" value="오른쪽회전">
+                    <br>
+                    <input type="button" onclick="flyControl('tilt',100)" value="피치업">
+                    <input type="button" onclick="flyControl('tilt',0)" value="가운데">
+                    <input type="button" onclick="flyControl('tilt',-100)" value="피치다운">
+                    <br>
+                    <input type="button" onclick="flyControl('roll',100)" value="롤 왼쪽">
+                    <input type="button" onclick="flyControl('roll',0)" value="가운데">
+                    <input type="button" onclick="flyControl('roll',-100)" value="롤 오른쪽">
+                -->
+            </div>
+        </div>
+
+        <div class="btnBox">
+            <span class="title">Roll</span>
+            <div>
+                <input type="button" onclick="regRollEvent()" value="위치지정">
+                <input type="button" onclick="rollControl('start')" value="Roll시작">
+                <input type="button" onclick="rollControl('stop')" value="Roll정지">
+            </div>
+        </div>
+
+        <div class="btnBox">
+            <span class="title">Rotate</span>
+            <div>
+                <input type="button" onclick="regRotateEvent()" value="위치지정">
+                <input type="button" onclick="rotateControl('start')" value="Rotate시작">
+                <input type="button" onclick="rotateControl('stop')" value="Rotate정지">
+            </div>
+        </div>
+
+        <div class="btnBox">
+            <span class="title">Driven<br>(운전모드)</span>
+            <div>
+                <input type="button" onclick="startDrive()" value="주행시작">
+                <input type="button" onclick="stopDrive()" value="주행정지">
+                <input type="button" onclick="driveControl('speed',10)" value="가속">
+                <input type="button" onclick="driveControl('speed',-10)" value="감속">
+                <input type="button" onclick="driveControl('heading',10)" value="왼쪽회전">
+                <input type="button" onclick="driveControl('heading',-10)" value="오른쪽회전">
+            </div>
+        </div>
+
+        <div class="btnBox">
+            <span class="title">Event</span>
+            <div>
+                <table>
+                    <tr>
+                        <td>아이디 : <input type="text" id="buildingId" name="buildingId" value=""></td>
+                        <td>타입 : <input type="text" id="buildingType" name="buildingType" value=""></td>
+                        <td>레이어 이름 : <input type="text" id="buildingLayerName" name="buildingLayerName" value=""></td>
+                        <td><input type="button" value="div 올리기" onclick="openBookmarkPopup();"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="btnBox">
+            <span class="title">3D모델 추가</span>
+            <div>
+                <input type="file" id="up_file" onchange="fileload()" > 
+                <!-- <input type="button" value ="데이터로드" id="fileload" name="fileload" onclick="fileload();"> -->
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
