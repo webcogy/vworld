@@ -5,8 +5,6 @@ function getMapCoods(map){
     });
 }
  */
-
-
 var idx=1;
 var setPosition = []; // 클릭한 위치 좌표 저장
 
@@ -23,17 +21,19 @@ function MapCoordsXy( windowposition, ecefposition, cartographic, featureInfo ){
     try{
         var x = vw.Util.toDegrees(cartographic.longitude);
         var y = vw.Util.toDegrees(cartographic.latitude);
+        var z = vw.Util.toDegrees(cartographic.height);
 
         setPosition[idx-1] = {
             name:'클릭한 위치' + idx,
             x:x,
             y:y,
+            z:z,
         };
 
-        setXy(x,y); 
+        setXy(x,y,z); 
         setMarker(x,y,'클릭한 위치' + idx);
         setMarkerlist(setPosition);
-        
+
     }catch(e){
         console.log(e)
     }
@@ -74,7 +74,9 @@ function MapCoordsMouseMoveEvent( windowposition, ecefposition, cartographic, fe
     try{
         var x = vw.Util.toDegrees(cartographic.longitude);
         var y = vw.Util.toDegrees(cartographic.latitude);
-        setXy(x,y);
+        var z = vw.Util.toDegrees(cartographic.height);
+        
+        setXy(x,y,z);
     }catch(e){
         console.log(e)
     }
@@ -86,11 +88,91 @@ function markerMoveTo(x,y,z){
     var mPosi = new vw.CameraPosition(movePo, new vw.Direction(0,-80,0));
     map.moveTo(mPosi);     
 
-    setXy(x,y);
+    setXy(x,y,z);
 }
 
 // 화면에 좌표값 셋팅
-function setXy(x,y){
+function setXy(x,y,z){
     $('#x').text(x);
     $('#y').text(y);
+    $('#z').text(z);
+}
+
+// 좌표따라 지도에 라인그리기 테스트
+function coordsPoint(x1,y1, x2,y2){
+    var outlineColor = document.getElementById("OutlineColor").value;
+    var fillColor = document.getElementById("FillColor").value;
+    var point1Coord = new vw.Coord(x1, y1);
+    var point2Coord = new vw.Coord(x2, y2);
+    
+    var ar = new Array();
+    ar.push(point1Coord);
+    ar.push(point2Coord);
+    
+    var coordCol = new vw.Collection(ar);
+    var linestring = new vw.geom.LineString(coordCol);
+    
+    linestring.setFillColor( fillColor );
+    linestring.setWidth(10);
+    
+    linestring.create();
+    
+    var coord_start = new vw.Coord(x1,y1);
+    var coord_end = new vw.Coord(x2,y2);
+    
+    var line = new vw.geom.Line(coord_start, coord_end);
+    
+    line.setFillColor( fillColor );
+    line.setWidth(10);
+    
+    line.create();
+    
+    var lineZ = new vw.geom.LineZ(coord_start, coord_end);
+    /*
+    lineZ.setFillColor( vw.Color.BLUE );
+    lineZ.setWidth(10);
+    lineZ.setDistanceFromTerrain(100);
+    
+    lineZ.create(); 
+    */
+}
+var actionPath;
+function driveCustom(x0,y0,z0, x1,y1,z1, x2,y2,z2){
+    if(actionPath != null) return;
+    /* 
+    var pointsSize = new vw.Size(1000, 1000);
+    pointsSize.fromCoord = new vw.CoordZ(x0,y0,z0); 
+    */
+    // pointsSize.fromCoord = new vw.CoordZ(x1,y1,z1);
+    // console.log(pointsSize)
+
+    var pointsArr = [
+        {
+            x:x0,
+            y:y0,
+            z:z0
+        },
+        {
+            x:x1,
+            y:y1,
+            z:z1
+        },
+        {
+            x:x2,
+            y:y2,
+            z:z2
+        }
+    ];
+    
+    actionPath = new vw.cameraAction.Path();
+    actionPath.directionType='LOOK_FORWARD';
+    actionPath.loops=1;
+    actionPath.points=pointsArr;
+    actionPath.speed=1000;
+    actionPath.turnAround=false;
+    // console.log("🚀 ~ file: custom.js ~ line 169 ~ driveCustom ~ actionPath", actionPath)
+    
+    actionPath.start();
+
+    // console.log("🚀 ~ file: custom.js ~ line 142 ~ driveCustom ~ vw.cameraAction.Path", actionPath)
 }

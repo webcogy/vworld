@@ -10,7 +10,7 @@ var drive;
 function startDrive()
 {
     if(drive == null){
-    drive = new vw.cameraAction.Drive();
+        drive = new vw.cameraAction.Drive();
     }
     drive.start();
 }

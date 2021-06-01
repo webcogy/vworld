@@ -16,11 +16,11 @@ function measureHeight() {
 function measureLine() {
     if ( map != null ) {
         // static 메서드만 있음. start(), stop().
-    vw.MeasureLine.start();
+        vw.MeasureLine.start();
     
-    // 우클릭시 종료 이벤트 설정
-    var evtMeasureRightHandler = function(event) {
-        vw.MeasureLine.stop();
+        // 우클릭시 종료 이벤트 설정
+        var evtMeasureRightHandler = function(event) {
+            vw.MeasureLine.stop();
         }
     
         vw.EventProcess.add( vw.MapController.RIGHTUPDNCLICK, map.onMouseRightDown, evtMeasureRightHandler);
@@ -33,9 +33,9 @@ function measureArea() {
         // static 메서드만 있음. start(), stop().
         vw.MeasureArea.start();
         
-    // 우클릭시 종료 이벤트 설정
-    var evtMeasureRightHandler = function(event) {
-        vw.MeasureArea.stop();
+        // 우클릭시 종료 이벤트 설정
+        var evtMeasureRightHandler = function(event) {
+            vw.MeasureArea.stop();
         }
     
         vw.EventProcess.add( vw.MapController.RIGHTUPDNCLICK, map.onMouseRightDown, evtMeasureRightHandler);  

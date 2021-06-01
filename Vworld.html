@@ -5,13 +5,23 @@
     기초자료 : https://www.vworld.kr/dev/v4dv_opnws3dmap2guide_s001.do
     코드샘플 : https://www.vworld.kr/dev/v4dv_opnws3dmap2exam_s001.do
 
-    ※ 3D모델을 미리 추가할 수 없다 ?
-    1) input[type=file] 은 읽기전용이고, VALUE에 임의 값을 미리 설정할 수 없다
-        https://okky.kr/article/260830
-        https://stackoverflow.com/questions/1696877/how-to-set-a-value-to-a-file-input-in-html
 
-    2) 3D모델 추가함수인 vw.geom.ModelZ는 아직 개선중이라 공식 API문서에 명시되어 있지 않다.
-        3D모델을 넣는 방법은 input file로 직접 넣는 방법 뿐인 것으로 추정됨.
+    [1] 3D모델을 미리 추가할 수 없다 ?
+        1) input[type=file] 은 읽기전용이고, VALUE에 임의 값을 미리 설정할 수 없다
+            https://okky.kr/article/260830
+            https://stackoverflow.com/questions/1696877/how-to-set-a-value-to-a-file-input-in-html
+
+        2) 3D모델 추가함수인 vw.geom.ModelZ는 아직 개선중이라 공식 API문서에 명시되어 있지 않다.
+            3D모델을 넣는 방법은 input file로 직접 넣는 방법 뿐인 것으로 추정됨.
+
+    [2] this.points.size() error
+    브이월드 사용시 jquery 사용 필수 + jquery 버전 1.8 이하버전만 사용해야한다.
+        
+        1) 답변
+            .size () 메소드는 jQuery 1.8부터 사용되지 않습니다. 대신 .length 속성을 사용하십시오.
+
+        2) DOM.size(); jquery를 사용하면서 DOM을 읽을 때만 가능한 것으로 확인
+
 -->
 <html>
 <head>
@@ -21,8 +31,8 @@
 
     <link href="Vworld.css" rel="stylesheet">
 
+    <script src="https://code.jquery.com/jquery-1.7.2.min.js" integrity="sha256-R7aNzoy2gFrVs+pNJ6+SokH04ppcEqJ0yFLkNGoFALQ=" crossorigin="anonymous"></script>
     <script src="https://map.vworld.kr/js/webglMapInit.js.do?version=2.0&apiKey=767B7ADF-10BA-3D86-AB7E-02816B5B92E9&domain=map.vworld.kr"></script>
-    <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
 
     <script src="map/inithome.js"></script>
     <script src="map/map.js"></script>
@@ -41,19 +51,23 @@
 </head>
 <body>
 <section>
+    <div id="OutlineColor"></div>
+    <div id="FillColor"></div>
     <div id="vmap"></div>
-
+    
     <div id="headerBox">
         <div id="coordBox">
             <mark>x좌표</mark>
             <div id="x"></div>
             <mark>y좌표</mark>
             <div id="y"></div>
+            <mark>z좌표</mark>
+            <div id="z"></div>
         </div>
         <div id="markerListDB"></div>
         <div id="markerList"></div>
     </div>
-
+    
     <div class="btnWrap">
         <!--
             추가 가능한 기능.
@@ -89,7 +103,6 @@
                 <input type="button" onclick="vwDirectionFront()" value="정면">
             </div>
         </div>
-        
 
         <div class="btnBox">
             <span class="title">Roll</span>
@@ -145,7 +158,7 @@
                 <input type="button" onclick="driveControl('heading',-10)" value="오른쪽회전"> -->
             </div>
         </div>
-<!-- 
+<!--
         <div class="btnBox">
             <span class="title">Event</span>
             <div>
@@ -159,7 +172,7 @@
                 </table>
             </div>
         </div>
- -->
+-->
         <div class="btnBox">
             <span class="title">3D모델 추가</span>
             <div>
@@ -171,27 +184,55 @@
     </div>
 </section>
 
+<div id="driveCustomBox">
+    
+</div>
+
+
 <script>
     vwmap();
             
-    var setPosition_db = [
+    var setPositionDB = [
         {
             "name": "나노아이티",
             "x": 128.6859692,
-            "y": 35.8380748
+            "y": 35.8380748,
+            "z": 1000,
         },
         {
             "name": "대공원역",
             "x": 128.67996631054746,
-            "y": 35.84275491075721
+            "y": 35.84275491075721,
+            "z": 1000,
         },
         {
             "name": "연호역",
             "x": 128.67127225855756,
-            "y": 35.84699702527979
+            "y": 35.84699702527979,
+            "z": 1000,
         }
     ];
-    setMarkerlistDB(setPosition_db);
+    setMarkerlistDB(setPositionDB);
+    setTimeout(function(){
+        coordsPoint(
+            setPositionDB[1].x,
+            setPositionDB[1].y,
+            setPositionDB[2].x,
+            setPositionDB[2].y,
+        );
+    },1000);
+
+    driveCustom(
+        setPositionDB[0].x,
+        setPositionDB[0].y,
+        setPositionDB[0].z,
+        setPositionDB[1].x,
+        setPositionDB[1].y,
+        setPositionDB[1].z,
+        setPositionDB[2].x,
+        setPositionDB[2].y,
+        setPositionDB[2].z,
+    );
 </script>
 </body>
 </html>
