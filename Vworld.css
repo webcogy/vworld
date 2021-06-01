@@ -74,3 +74,15 @@ input[type="button"] {
   color: blue;
   text-decoration: underline;
 }
+
+#markerListDB {
+  padding-top: 50px;
+}
+
+#markerListDB a {
+  display: block;
+  font-size: 17px;
+  margin-bottom: 20px;
+  color: navy;
+  text-decoration: underline;
+}

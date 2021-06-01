@@ -8,46 +8,76 @@ function getMapCoods(map){
 
 
 var idx=1;
+var setPosition = []; // 클릭한 위치 좌표 저장
 
 // 클릭한 위치 좌표가져오기
 function getMapCoods(map){
-    map.onClick.addEventListener(MapCoodsEvent);  
-    map.onMouseMove.addEventListener(MapCoodsMouseMoveEvent);
+    setTimeout(function(){
+        map.onClick.addEventListener(MapCoordsXy);  
+        map.onMouseMove.addEventListener(MapCoordsMouseMoveEvent);
+    },200);
 }
 
-function MapCoodsEvent( windowposition, ecefposition, cartographic, featureInfo ){
-    var x = vw.Util.toDegrees(cartographic.longitude);
-    var y = vw.Util.toDegrees(cartographic.latitude);
+// x,y 좌표를 뽑아오는 것이 목적인 함수
+function MapCoordsXy( windowposition, ecefposition, cartographic, featureInfo ){
+    try{
+        var x = vw.Util.toDegrees(cartographic.longitude);
+        var y = vw.Util.toDegrees(cartographic.latitude);
 
-    setUI_xy(x,y);
-    
-    // 화면에 마커 셋팅
-    setMarker(x,y,'클릭한 위치' + idx);
+        setPosition[idx-1] = {
+            name:'클릭한 위치' + idx,
+            x:x,
+            y:y,
+        };
 
-    // 클릭한 마커 배열에 담기
-    setPosition[idx-1] = {
-        x:x,
-        y:y,
-        name:'클릭한 위치' + idx
-    };
-
-    // 마커 리스트 뿌림
-    var add_html='';
-    for(var i=0; i<setPosition.length; i++){
-        add_html += '<a class="link_marker" href="javascript:markerMoveTo('+setPosition[i].x + ','+setPosition[i].y+',1000)" value="'+setPosition[i].name+'">'+setPosition[i].name+'</a>';
+        setXy(x,y); 
+        setMarker(x,y,'클릭한 위치' + idx);
+        setMarkerlist(setPosition);
+        
+    }catch(e){
+        console.log(e)
     }
-    $('#markerList').empty().append(add_html);
-    add_html='';
+
     return idx++;
 }
 
-// x,y좌표 마우스 움직일때마다 실시간 읽기
-function MapCoodsMouseMoveEvent( windowposition, ecefposition, cartographic, featureInfo ){
-    var x = vw.Util.toDegrees(cartographic.longitude);
-    var y = vw.Util.toDegrees(cartographic.latitude);
+// 지도 위에서 클릭한 좌표리스트
+function setMarkerlist(arr){
+    var add_html='';
+    for(var i=0; i<arr.length; i++){
+        add_html += '<a class="link_marker" href="javascript:markerMoveTo('+arr[i].x + ','+arr[i].y+',1000)" value="'+arr[i].name+'">'+arr[i].name+'</a>';
+    }
+    $('#markerList').empty().append(add_html);
+    add_html='';
+}
 
-    // 화면에 좌표값 셋팅
-    setUI_xy(x,y);
+// DB에서 가져온 좌표리스트
+function setMarkerlistDB(arr){
+    var add_html='';
+    for(var i=0; i<arr.length; i++){
+        add_html += '<a class="link_marker" href="javascript:markerMoveTo('+arr[i].x + ','+arr[i].y+',1000)" value="'+arr[i].name+'">'+arr[i].name+'</a>';
+    }
+    
+    setTimeout(function(){
+        for(var i=0; i<arr.length; i++){
+            setMarker(arr[i].x, arr[i].y, arr[i].name);
+        }
+    }, 2000);
+    
+    $('#markerListDB').empty().append(add_html);
+    add_html='';
+}
+
+
+// x,y좌표 마우스 움직일때마다 실시간 읽기
+function MapCoordsMouseMoveEvent( windowposition, ecefposition, cartographic, featureInfo ){
+    try{
+        var x = vw.Util.toDegrees(cartographic.longitude);
+        var y = vw.Util.toDegrees(cartographic.latitude);
+        setXy(x,y);
+    }catch(e){
+        console.log(e)
+    }
 }
 
 // 마커 클릭시 좌표로 이동
@@ -56,11 +86,11 @@ function markerMoveTo(x,y,z){
     var mPosi = new vw.CameraPosition(movePo, new vw.Direction(0,-80,0));
     map.moveTo(mPosi);     
 
-    setUI_xy(x,y);
+    setXy(x,y);
 }
 
 // 화면에 좌표값 셋팅
-function setUI_xy(x,y){
+function setXy(x,y){
     $('#x').text(x);
     $('#y').text(y);
 }

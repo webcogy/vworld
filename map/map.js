@@ -66,12 +66,12 @@ function vwmoveTo(x,y,z){
 }
 
 // 마커 셋팅
-function setMarker(lng, lat, mngNo) {
-    var point1Coord = new vw.Coord(lng, lat);
+function setMarker(x, y, name) {
+    var point1Coord = new vw.Coord(x, y);
     var pt = new vw.geom.Point( point1Coord );
 
     pt.setImage("http://map.vworld.kr/images/op02/map_point.png");
-    pt.setName(mngNo);
+    pt.setName(name);
     pt.setFont( "고딕" );
     pt.setFontSize( 20 );
     pt.setDistanceFromTerrain(10);

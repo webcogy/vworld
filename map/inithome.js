@@ -13,7 +13,6 @@ var sZ = 10000;
 var sH = 0;
 var sT = -50;
 var sR = 0;
-var setPosition = []; // 클릭한 위치 좌표 저장
 
 
 /* begin -------- 맵 초기화 코드 --------- */
@@ -39,7 +38,7 @@ function vwmap() {
     setTimeout(function(){
         setMarker(sX,sY, '맵 시작 위치 (위치변경가능)');
         getMapCoods(map);
-    },200);
+    },1000);
 }
 
 // 웹지엘 지도 호출.

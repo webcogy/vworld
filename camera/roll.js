@@ -26,6 +26,6 @@ function rollControl(flag,loc){
         roll.start();
     }else if(flag == 'stop'){
         roll.stop();
-        map.lookat.moveTo(mapOptions.initPosition); //초기위치이동
+        // map.lookat.moveTo(mapOptions.initPosition); //초기위치이동
     }
 }

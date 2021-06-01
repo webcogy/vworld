@@ -19,8 +19,8 @@ function rotateControl(flag,loc,_altitude){
             rotate.setDistance(_altitude);
     }    
     }else if(flag == "start"){       
-    rotate.start();
+        rotate.start();
     }else if(flag == "stop"){
-    rotate.stop();
+        rotate.stop();
     }
 }

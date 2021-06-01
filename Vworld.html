@@ -5,6 +5,13 @@
     기초자료 : https://www.vworld.kr/dev/v4dv_opnws3dmap2guide_s001.do
     코드샘플 : https://www.vworld.kr/dev/v4dv_opnws3dmap2exam_s001.do
 
+    ※ 3D모델을 미리 추가할 수 없다 ?
+    1) input[type=file] 은 읽기전용이고, VALUE에 임의 값을 미리 설정할 수 없다
+        https://okky.kr/article/260830
+        https://stackoverflow.com/questions/1696877/how-to-set-a-value-to-a-file-input-in-html
+
+    2) 3D모델 추가함수인 vw.geom.ModelZ는 아직 개선중이라 공식 API문서에 명시되어 있지 않다.
+        3D모델을 넣는 방법은 input file로 직접 넣는 방법 뿐인 것으로 추정됨.
 -->
 <html>
 <head>
@@ -14,8 +21,7 @@
 
     <link href="Vworld.css" rel="stylesheet">
 
-    <script type="text/javascript"
-    src="https://map.vworld.kr/js/webglMapInit.js.do?version=2.0&apiKey=767B7ADF-10BA-3D86-AB7E-02816B5B92E9&domain=map.vworld.kr"></script>
+    <script src="https://map.vworld.kr/js/webglMapInit.js.do?version=2.0&apiKey=767B7ADF-10BA-3D86-AB7E-02816B5B92E9&domain=map.vworld.kr"></script>
     <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
 
     <script src="map/inithome.js"></script>
@@ -36,9 +42,7 @@
 <body>
 <section>
     <div id="vmap"></div>
-    <script>
-        vwmap();
-    </script>
+
     <div id="headerBox">
         <div id="coordBox">
             <mark>x좌표</mark>
@@ -46,10 +50,9 @@
             <mark>y좌표</mark>
             <div id="y"></div>
         </div>
+        <div id="markerListDB"></div>
         <div id="markerList"></div>
     </div>
-
-
 
     <div class="btnWrap">
         <!--
@@ -66,8 +69,8 @@
                 <input type="button" onclick="measureArea()" value="면적">
                 <input type="button" onclick="stop()" value="종료">
                 <input type="button" onclick="erase()" value="지우기">
-                <input type="button" onclick="vwmoveTo(128.6859692,35.8380748,1000)" value="나노아이티">
-                <input type="button" value="초기지도이동" onclick="javascript:flyHome();"/>
+                <!-- <input type="button" onclick="vwmoveTo(128.6859692,35.8380748,1000)" value="나노아이티"> -->
+                <input type="button" value="초기위치이동" onclick="javascript:flyHome();"/>
                 <!-- <select id="setMode" onchange="mapController.setMode(this.value)">
                     <option value="ws3d-map">3d-map</option>
                     <option value="2d-map">2d-map</option>  
@@ -84,6 +87,25 @@
                 <input type="button" onclick="vwDirectionSouth()" value="남쪽">
                 <input type="button" onclick="vwDirectionGround()" value="지면">
                 <input type="button" onclick="vwDirectionFront()" value="정면">
+            </div>
+        </div>
+        
+
+        <div class="btnBox">
+            <span class="title">Roll</span>
+            <div>
+                <input type="button" onclick="regRollEvent()" value="위치지정">
+                <input type="button" onclick="rollControl('start')" value="Roll시작">
+                <input type="button" onclick="rollControl('stop')" value="Roll정지">
+            </div>
+        </div>
+
+        <div class="btnBox">
+            <span class="title">Rotate</span>
+            <div>
+                <input type="button" onclick="regRotateEvent()" value="위치지정">
+                <input type="button" onclick="rotateControl('start')" value="Rotate시작">
+                <input type="button" onclick="rotateControl('stop')" value="Rotate정지">
             </div>
         </div>
         <div class="btnBox">
@@ -113,35 +135,17 @@
         </div>
 
         <div class="btnBox">
-            <span class="title">Roll</span>
-            <div>
-                <input type="button" onclick="regRollEvent()" value="위치지정">
-                <input type="button" onclick="rollControl('start')" value="Roll시작">
-                <input type="button" onclick="rollControl('stop')" value="Roll정지">
-            </div>
-        </div>
-
-        <div class="btnBox">
-            <span class="title">Rotate</span>
-            <div>
-                <input type="button" onclick="regRotateEvent()" value="위치지정">
-                <input type="button" onclick="rotateControl('start')" value="Rotate시작">
-                <input type="button" onclick="rotateControl('stop')" value="Rotate정지">
-            </div>
-        </div>
-
-        <div class="btnBox">
             <span class="title">Driven<br>(운전모드)</span>
             <div>
                 <input type="button" onclick="startDrive()" value="주행시작">
                 <input type="button" onclick="stopDrive()" value="주행정지">
                 <input type="button" onclick="driveControl('speed',10)" value="가속">
                 <input type="button" onclick="driveControl('speed',-10)" value="감속">
-                <input type="button" onclick="driveControl('heading',10)" value="왼쪽회전">
-                <input type="button" onclick="driveControl('heading',-10)" value="오른쪽회전">
+                <!-- <input type="button" onclick="driveControl('heading',10)" value="왼쪽회전">
+                <input type="button" onclick="driveControl('heading',-10)" value="오른쪽회전"> -->
             </div>
         </div>
-
+<!-- 
         <div class="btnBox">
             <span class="title">Event</span>
             <div>
@@ -155,15 +159,39 @@
                 </table>
             </div>
         </div>
-
+ -->
         <div class="btnBox">
             <span class="title">3D모델 추가</span>
             <div>
-                <input type="file" id="up_file" onchange="fileload()" > 
+                <input type="file" id="up_file"  onchange="fileload()"> 
+                <!-- <div class="img_flag" data-imgurl="http://39.116.31.25/map/img/flag1.gltf">깃발</div> -->
                 <!-- <input type="button" value ="데이터로드" id="fileload" name="fileload" onclick="fileload();"> -->
             </div>
         </div>
     </div>
 </section>
+
+<script>
+    vwmap();
+            
+    var setPosition_db = [
+        {
+            "name": "나노아이티",
+            "x": 128.6859692,
+            "y": 35.8380748
+        },
+        {
+            "name": "대공원역",
+            "x": 128.67996631054746,
+            "y": 35.84275491075721
+        },
+        {
+            "name": "연호역",
+            "x": 128.67127225855756,
+            "y": 35.84699702527979
+        }
+    ];
+    setMarkerlistDB(setPosition_db);
+</script>
 </body>
 </html>
