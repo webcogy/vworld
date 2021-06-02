@@ -4,6 +4,7 @@
 
     기초자료 : https://www.vworld.kr/dev/v4dv_opnws3dmap2guide_s001.do
     코드샘플 : https://www.vworld.kr/dev/v4dv_opnws3dmap2exam_s001.do
+    컨설팅신청(브이월드 기술지원) : http://www.spacen.or.kr/vworld_mgm/cnslt_ptt_select.do
 
 
     [1] 3D모델을 미리 추가할 수 없다 ?
@@ -13,6 +14,8 @@
 
         2) 3D모델 추가함수인 vw.geom.ModelZ는 아직 개선중이라 공식 API문서에 명시되어 있지 않다.
             3D모델을 넣는 방법은 input file로 직접 넣는 방법 뿐인 것으로 추정됨.
+
+        3) blob객체를 이용..시도중
 
     [2] this.points.size() error
     브이월드 사용시 jquery 사용 필수 + jquery 버전 1.8 이하버전만 사용해야한다.
@@ -47,10 +50,12 @@
     <script src="event/event.js"></script>
     <script src="event/custom.js"></script>
 
-    <script src="3dmodel/fileload.js"></script>
+    <script src="fileload/fileload.js"></script>
+    
 </head>
 <body>
 <section>
+
     <div id="OutlineColor"></div>
     <div id="FillColor"></div>
     <div id="vmap"></div>
@@ -176,7 +181,8 @@
         <div class="btnBox">
             <span class="title">3D모델 추가</span>
             <div>
-                <input type="file" id="up_file"  onchange="fileload()"> 
+                <input type="button" onclick="createGltf()" value="gltf추가">
+                <!-- <input type="file" id="up_file"  onchange="fileload()">  -->
                 <!-- <div class="img_flag" data-imgurl="http://39.116.31.25/map/img/flag1.gltf">깃발</div> -->
                 <!-- <input type="button" value ="데이터로드" id="fileload" name="fileload" onclick="fileload();"> -->
             </div>
@@ -184,14 +190,11 @@
     </div>
 </section>
 
-<div id="driveCustomBox">
-    
-</div>
+<div id="driveCustomBox"></div>
 
 
 <script>
-    vwmap();
-            
+    vwmap(); 
     var setPositionDB = [
         {
             "name": "나노아이티",
@@ -213,6 +216,8 @@
         }
     ];
     setMarkerlistDB(setPositionDB);
+
+    
     setTimeout(function(){
         coordsPoint(
             setPositionDB[1].x,
@@ -220,8 +225,8 @@
             setPositionDB[2].x,
             setPositionDB[2].y,
         );
-    },1000);
-
+    },3000);
+    
     driveCustom(
         setPositionDB[0].x,
         setPositionDB[0].y,

@@ -172,7 +172,7 @@ function driveCustom(x0,y0,z0, x1,y1,z1, x2,y2,z2){
     actionPath.turnAround=false;
     // console.log("🚀 ~ file: custom.js ~ line 169 ~ driveCustom ~ actionPath", actionPath)
     
-    actionPath.start();
+    // actionPath.start();
 
     // console.log("🚀 ~ file: custom.js ~ line 142 ~ driveCustom ~ vw.cameraAction.Path", actionPath)
 }
