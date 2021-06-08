@@ -163,7 +163,13 @@ function driveCustom(x0,y0,z0, x1,y1,z1, x2,y2,z2){
             z:z2
         }
     ];
-    
+
+    /*
+        21/06/08 공간정보산업진흥원 답변 : 
+            actionPath.Path의 "주어진 경로대로 경로이동"은 아직 개발되지 않았다. 
+            ※ 추가로 API문서에 있더라도 작업이 안되어 있을 수도 있기 때문에, 코드샘플에 있는 기능이 아니면 전부 안된다고 봐도 무방할듯하다.
+    */
+
     actionPath = new vw.cameraAction.Path();
     actionPath.directionType='LOOK_FORWARD';
     actionPath.loops=1;

@@ -15,8 +15,8 @@
 
 // fileload => input file로 파일 선택 후 3D모델추가할 때 사용
 function fileload(){
-   var tmppath = window.URL.createObjectURL($('[type=file]')[0].files[0]);
-    // console.log("🚀 ~ file: fileload.js ~ line 25 ~ fileload ~ tmppath", tmppath)
+    var tmppath = window.URL.createObjectURL($('[type=file]')[0].files[0]);
+    // console.log("🚀 ~ file: fileload.js ~ line 25 ~ fileload ~ tmppath", tmppath);
 
     var point = new vw.CoordZ(128.6859692,35.8380748, 1);
     var options = { scale: 6, minimumPixelSize: 10 };
